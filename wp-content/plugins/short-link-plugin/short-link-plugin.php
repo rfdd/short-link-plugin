@@ -84,3 +84,34 @@ function short_link_redirect() {
     }
 }
 add_action('template_redirect', 'short_link_redirect');
+
+
+function short_link_columns_head($defaults) {
+    $defaults['short_link_full_url'] = 'Full URL';
+    $defaults['short_link_short_url'] = 'Short URL';
+    $defaults['short_link_clicks'] = 'Total Clicks';
+    $defaults['short_link_unique_clicks'] = 'Unique Clicks';
+    return $defaults;
+}
+add_filter('manage_short_link_posts_columns', 'short_link_columns_head');
+
+function short_link_columns_content($column_name, $post_id) {
+    if ($column_name == 'short_link_full_url') {
+        $original_url = get_post_meta($post_id, '_short_link_url', true);
+        echo $original_url ? $original_url : '—';
+    }
+    if ($column_name == 'short_link_short_url') {
+        $short_url = get_permalink($post_id);
+        echo $short_url ? $short_url : '—';
+    }
+    if ($column_name == 'short_link_clicks') {
+        $clicks_count = get_post_meta($post_id, '_short_link_clicks', true);
+        echo $clicks_count ? $clicks_count : '0';
+    }
+    if ($column_name == 'short_link_unique_clicks') {
+        $unique_clicks_count = get_post_meta($post_id, '_short_link_unique_clicks', true);
+        echo $unique_clicks_count ? $unique_clicks_count : '0';
+    }
+}
+add_action('manage_short_link_posts_custom_column', 'short_link_columns_content', 10, 2);
+
