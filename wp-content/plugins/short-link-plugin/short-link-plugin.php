@@ -44,11 +44,32 @@ function short_link_save_postdata($post_id) {
 }
 add_action('save_post', 'short_link_save_postdata');
 
+function short_link_start_session() {
+    if (!session_id()) {
+        session_start();
+    }
+}
+add_action('init', 'short_link_start_session');
+
 
 function short_link_redirect() {
     if (is_singular('short_link')) {
         $post_id = get_the_ID();
         $original_url = get_post_meta($post_id, '_short_link_url', true);
+
+        //Click count
+        $clicks_count = (int) get_post_meta($post_id, '_short_link_clicks', true);
+        update_post_meta($post_id, '_short_link_clicks', $clicks_count + 1);
+
+        //Uniq clicks
+        $last_click = isset($_SESSION['last_click'][$post_id]) ? $_SESSION['last_click'][$post_id] : 0;
+        $current_time = time();
+
+        if ($current_time - $last_click >= 120) {
+            $_SESSION['last_click'][$post_id] = $current_time;
+            $unique_clicks_count = (int) get_post_meta($post_id, '_short_link_unique_clicks', true);
+            update_post_meta($post_id, '_short_link_unique_clicks', $unique_clicks_count + 1);
+        }
 
         if ($original_url) {
             wp_redirect($original_url, 301);
