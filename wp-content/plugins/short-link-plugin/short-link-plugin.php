@@ -45,3 +45,21 @@ function short_link_save_postdata($post_id) {
 add_action('save_post', 'short_link_save_postdata');
 
 
+function short_link_redirect() {
+    if (is_singular('short_link')) {
+        $post_id = get_the_ID();
+        $original_url = get_post_meta($post_id, '_short_link_url', true);
+
+        if ($original_url) {
+            wp_redirect($original_url, 301);
+            exit;
+        } else {
+            global $wp_query;
+            $wp_query->set_404();
+            status_header(404);
+            get_template_part(404); 
+            exit;
+        }
+    }
+}
+add_action('template_redirect', 'short_link_redirect');
