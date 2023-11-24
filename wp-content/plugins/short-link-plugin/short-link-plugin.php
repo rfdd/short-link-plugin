@@ -29,17 +29,26 @@ add_action('add_meta_boxes', 'short_link_add_meta_box');
 
 function short_link_meta_box_html($post) {
     $value = get_post_meta($post->ID, '_short_link_url', true);
-    echo '<label for="short_link_url_field">Введите URL:</label>';
-    echo '<input type="url" id="short_link_url_field" name="short_link_url_field" value="' . esc_attr($value) . '" size="25">';
+    $html = <<<HTML
+    <label for="short_link_url_field">Введите URL:</label>
+    <input type="url" id="short_link_url_field" name="short_link_url_field" value="%s" size="25">
+    HTML;
+
+    echo sprintf($html, esc_attr($value));
 }
 
 function short_link_save_postdata($post_id) {
     if (array_key_exists('short_link_url_field', $_POST)) {
-        update_post_meta(
-            $post_id,
-            '_short_link_url',
-            $_POST['short_link_url_field']
-        );
+        $url = $_POST['short_link_url_field'];
+        if (!empty($url) && filter_var($url, FILTER_VALIDATE_URL)) {
+            update_post_meta(
+                $post_id,
+                '_short_link_url',
+                $url
+            );
+        } else {
+            delete_post_meta($post_id, '_short_link_url');
+        }
     }
 }
 add_action('save_post', 'short_link_save_postdata');
