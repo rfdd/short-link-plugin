@@ -5,6 +5,7 @@ Description: Плагин для создания и управления кор
 Version: 1.0
 Author: rfd
 */
+require_once __DIR__ . '/vendor/autoload.php';
 
 function short_link_plugin_init() {
     $args = [
