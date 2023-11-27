@@ -38,6 +38,8 @@ function short_link_meta_box_html($post) {
     echo sprintf($html, esc_attr($value));
 }
 
+
+// Saves the URL entered in the meta box
 function short_link_save_postdata($post_id) {
     if (array_key_exists('short_link_url_field', $_POST)) {
         $url = $_POST['short_link_url_field'];
@@ -54,6 +56,9 @@ function short_link_save_postdata($post_id) {
 }
 add_action('save_post', 'short_link_save_postdata');
 
+
+
+// Starts a PHP session if not already started
 function short_link_start_session() {
     if (!session_id()) {
         session_start();
@@ -62,6 +67,7 @@ function short_link_start_session() {
 add_action('init', 'short_link_start_session');
 
 
+// Redirects to the original URL for short link posts
 function short_link_redirect() {
     if (is_singular('short_link')) {
         $post_id = get_the_ID();
@@ -96,6 +102,7 @@ function short_link_redirect() {
 add_action('template_redirect', 'short_link_redirect');
 
 
+// Adds custom columns to the admin list for short links
 function short_link_columns_head($defaults) {
     $defaults['short_link_full_url'] = __('Full URL', 'short-link-plugin');
     $defaults['short_link_short_url'] = __('Short URL', 'short-link-plugin');
@@ -125,6 +132,8 @@ function short_link_columns_content($column_name, $post_id) {
 }
 add_action('manage_short_link_posts_custom_column', 'short_link_columns_content', 10, 2);
 
+
+// Load plugin text domain for translations
 function short_link_load_textdomain() {
     load_plugin_textdomain('short-link-plugin', false, basename(dirname(__FILE__)) . '/lang');
 }
