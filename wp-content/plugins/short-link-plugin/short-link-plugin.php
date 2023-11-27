@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: Short Link Plugin
-Description: Плагин для создания и управления короткими URL-ссылками.
+Description: Managing and create short URL plugin
 Version: 1.0
 Author: rfd
 */
