@@ -11,7 +11,7 @@ function short_link_plugin_init() {
     $args = [
         'public' => true,
         'rewrite' => true,  
-        'label'  => 'Short Links',
+        'label'  => __('Short Links', 'short-link-plugin'),
         // other arguments
     ];
     register_post_type('short_link', $args);
@@ -21,7 +21,7 @@ add_action('init', 'short_link_plugin_init');
 function short_link_add_meta_box() {
     add_meta_box(
         'short_link_url',           // ID
-        'Original URL',
+        __('Original URL', 'short-link-plugin'),
         'short_link_meta_box_html', // Callback
         'short_link'                // Post type
     );
@@ -31,7 +31,7 @@ add_action('add_meta_boxes', 'short_link_add_meta_box');
 function short_link_meta_box_html($post) {
     $value = get_post_meta($post->ID, '_short_link_url', true);
     $html = <<<HTML
-    <label for="short_link_url_field">Введите URL:</label>
+    <label for="short_link_url_field">Enter URL:</label>
     <input type="url" id="short_link_url_field" name="short_link_url_field" value="%s" size="25">
     HTML;
 
@@ -97,10 +97,10 @@ add_action('template_redirect', 'short_link_redirect');
 
 
 function short_link_columns_head($defaults) {
-    $defaults['short_link_full_url'] = 'Full URL';
-    $defaults['short_link_short_url'] = 'Short URL';
-    $defaults['short_link_clicks'] = 'Total Clicks';
-    $defaults['short_link_unique_clicks'] = 'Unique Clicks';
+    $defaults['short_link_full_url'] = __('Full URL', 'short-link-plugin');
+    $defaults['short_link_short_url'] = __('Short URL', 'short-link-plugin');
+    $defaults['short_link_clicks'] = __('Total Clicks', 'short-link-plugin');
+    $defaults['short_link_unique_clicks'] = __('Unique Clicks', 'short-link-plugin');
     return $defaults;
 }
 add_filter('manage_short_link_posts_columns', 'short_link_columns_head');
@@ -125,3 +125,7 @@ function short_link_columns_content($column_name, $post_id) {
 }
 add_action('manage_short_link_posts_custom_column', 'short_link_columns_content', 10, 2);
 
+function short_link_load_textdomain() {
+    load_plugin_textdomain('short-link-plugin', false, basename(dirname(__FILE__)) . '/lang');
+}
+add_action('plugins_loaded', 'short_link_load_textdomain');
